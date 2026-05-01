@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongoServer = null;
 
@@ -30,10 +29,18 @@ async function connectDB() {
       return mongoose;
     }).catch(async (error) => {
       console.warn('Failed to connect to MongoDB Atlas. Error:', error.message);
+      
+      // Never use MemoryServer in production (causes libcurl.so.4 errors on Railway)
+      if (process.env.NODE_ENV === 'production' || !process.env.MONGODB_URI?.includes('mongodb')) {
+         console.error('Critical: MongoDB connection failed in production.');
+         throw error;
+      }
+
       console.warn('Falling back to local in-memory MongoDB server for development...');
       
       try {
         if (!mongoServer) {
+          const { MongoMemoryServer } = await import('mongodb-memory-server');
           mongoServer = await MongoMemoryServer.create();
         }
         uri = mongoServer.getUri();

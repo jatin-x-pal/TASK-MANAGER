@@ -9,8 +9,8 @@ if (!cached) {
 }
 
 async function connectDB() {
-  let uri = process.env.MONGODB_URI;
-  const maskedURI = uri ? uri.replace(/:([^@]+)@/, ':****@') : 'UNDEFINED';
+  let uri = process.env.MONGODB_URI || 'UNDEFINED_URI';
+  const maskedURI = uri !== 'UNDEFINED_URI' ? uri.replace(/:([^@]+)@/, ':****@') : 'UNDEFINED';
   console.log('Attempting to connect to database:', maskedURI);
 
   if (cached.conn) {
@@ -23,6 +23,11 @@ async function connectDB() {
       family: 4,
       serverSelectionTimeoutMS: 5000,
     };
+
+    if (!uri) {
+      console.warn('MONGODB_URI is not defined in environment variables.');
+      uri = 'mongodb://localhost:27017/taskflow'; // Fallback to trigger the catch block below
+    }
 
     cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
       console.log('Successfully connected to MongoDB Atlas');

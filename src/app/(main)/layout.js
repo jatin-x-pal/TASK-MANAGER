@@ -64,7 +64,7 @@ export default function MainLayout({ children }) {
       {/* Sidebar */}
       <aside style={{ 
         width: '100px', 
-        backgroundColor: 'white', 
+        backgroundColor: 'var(--surface)', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
@@ -123,7 +123,7 @@ export default function MainLayout({ children }) {
         {/* TOP BAR */}
         <header style={{ 
           height: '100px', 
-          backgroundColor: 'white', 
+          backgroundColor: 'var(--surface)', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between', 
@@ -135,7 +135,7 @@ export default function MainLayout({ children }) {
         }}>
           {/* Greeting Text */}
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1A1A1A' }}>Good Morning {user?.name.split(' ')[0] || 'User'}!</h2>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--foreground)' }}>Good Morning {user?.name.split(' ')[0] || 'User'}!</h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '500' }}>Explore your productivity metrics and tasks</p>
           </div>
 
@@ -186,14 +186,14 @@ export default function MainLayout({ children }) {
             <div style={{ position: 'relative' }}>
               <button 
                 onClick={() => { setShowNotifications(!showNotifications); setShowProfileMenu(false); }}
-                style={{ position: 'relative', color: '#1A1A1A', cursor: 'pointer', border: 'none', background: 'transparent' }}
+                style={{ position: 'relative', color: 'var(--foreground)', cursor: 'pointer', border: 'none', background: 'transparent' }}
               >
                 <Bell size={24} />
-                <span style={{ position: 'absolute', top: '-5px', right: '-4px', width: '12px', height: '12px', backgroundColor: '#FF6B6B', borderRadius: '50%', border: '2.5px solid white' }}></span>
+                <span style={{ position: 'absolute', top: '-5px', right: '-4px', width: '12px', height: '12px', backgroundColor: '#FF6B6B', borderRadius: '50%', border: '2.5px solid var(--surface)' }}></span>
               </button>
 
               {showNotifications && (
-                <div className="card animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-50px', width: '340px', padding: '1.5rem', zIndex: 200, boxShadow: '0 15px 40px rgba(0,0,0,0.12)', backgroundColor: 'white', borderRadius: '20px' }}>
+                <div className="card animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-50px', width: '340px', padding: '1.5rem', zIndex: 200, boxShadow: '0 15px 40px rgba(0,0,0,0.12)', backgroundColor: 'var(--surface)', borderRadius: '20px' }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
                      <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>Notifications</h3>
                      <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', cursor: 'pointer' }}>Clear all</span>
@@ -203,7 +203,7 @@ export default function MainLayout({ children }) {
                         <div key={n.id} style={{ display: 'flex', gap: '1rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: n.type === 'success' ? '#4CAF50' : '#FF9F43', marginTop: '4px' }}></div>
                            <div style={{ flex: 1 }}>
-                             <p style={{ fontSize: '0.85rem', marginBottom: '0.2rem', lineHeight: '1.4', color: '#333' }}>{n.text}</p>
+                             <p style={{ fontSize: '0.85rem', marginBottom: '0.2rem', lineHeight: '1.4', color: 'var(--foreground)' }}>{n.text}</p>
                              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{n.time}</span>
                            </div>
                         </div>
@@ -219,14 +219,18 @@ export default function MainLayout({ children }) {
                 onClick={() => { setShowProfileMenu(!showProfileMenu); setShowNotifications(false); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', border: 'none', background: 'transparent', cursor: 'pointer' }}
               >
-                 <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#48A3FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.1rem', boxShadow: '0 6px 12px rgba(72,163,255,0.2)' }}>
-                   {user?.name?.charAt(0) || 'U'}
-                 </div>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.1rem', overflow: 'hidden', boxShadow: '0 6px 12px rgba(72,163,255,0.2)' }}>
+                    {user?.profileImage ? (
+                      <img src={user.profileImage} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      user?.name?.charAt(0) || 'U'
+                    )}
+                  </div>
                  <ChevronDown size={18} style={{ color: 'var(--text-secondary)', transition: 'transform 0.2s', transform: showProfileMenu ? 'rotate(180deg)' : 'none' }} />
               </button>
 
               {showProfileMenu && (
-                <div className="card animate-fade-in" style={{ position: 'absolute', top: '60px', right: 0, width: '220px', padding: '0.8rem', zIndex: 200, boxShadow: '0 15px 40px rgba(0,0,0,0.12)', backgroundColor: 'white', borderRadius: '18px' }}>
+                <div className="card animate-fade-in" style={{ position: 'absolute', top: '60px', right: 0, width: '220px', padding: '0.8rem', zIndex: 200, boxShadow: '0 15px 40px rgba(0,0,0,0.12)', backgroundColor: 'var(--surface)', borderRadius: '18px' }}>
                    <div style={{ padding: '0.8rem', borderBottom: '1px solid var(--border)', marginBottom: '0.5rem' }}>
                       <div style={{ fontWeight: '700', fontSize: '0.95rem' }}>{user?.name}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{user?.email}</div>

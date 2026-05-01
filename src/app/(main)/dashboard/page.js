@@ -38,6 +38,7 @@ export default function Dashboard() {
   const { data: statsRes, mutate: mutateStats } = useSWR('/api/dashboard', fetcher, { refreshInterval: 5000 });
   const { data: activityRes } = useSWR('/api/activities', fetcher, { refreshInterval: 5000 });
   const { data: timeOffRes } = useSWR('/api/time-off', fetcher, { refreshInterval: 5000 });
+  const { data: scheduleRes } = useSWR('/api/schedules', fetcher, { refreshInterval: 5000 });
 
   const [activeActivityTab, setActiveActivityTab] = useState('Activities');
   const [selectedTask, setSelectedTask] = useState(null);
@@ -55,6 +56,10 @@ export default function Dashboard() {
   const activities = activityRes?.data || [];
   const timeOff = timeOffRes?.data || [];
   const timeOffSummary = timeOffRes?.summary || { total: 20, used: 0, left: 20 };
+  const schedules = scheduleRes?.data || [];
+
+  const meetings = schedules.filter(s => s.type === 'Meeting');
+  const events = schedules.filter(s => s.type === 'Event');
 
   const chartData = stats.productivity.chartData;
 
@@ -250,20 +255,56 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1 }}>
-            {activities.length === 0 ? (
-              <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.85rem', paddingTop: '3rem' }}>No activities logged for today.</div>
-            ) : (
-              activities.slice(0, 5).map(act => (
-                <ActivityItem 
-                  key={act._id}
-                  time={new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
-                  title={act.action} 
-                  user={act.userId?.name}
-                  tag={act.projectId?.name || 'General'} 
-                  accent={act.action.includes('created') ? '#48A3FF' : act.action.includes('updated') ? '#FF9F43' : '#4CAF50'}
-                />
-              ))
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1, overflowY: 'auto', maxHeight: '400px' }}>
+            {activeActivityTab === 'Activities' && (
+              activities.length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.85rem', paddingTop: '3rem' }}>No activities logged for today.</div>
+              ) : (
+                activities.slice(0, 10).map(act => (
+                  <ActivityItem 
+                    key={act._id}
+                    time={new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
+                    title={act.action} 
+                    user={act.userId?.name}
+                    tag={act.projectId?.name || 'General'} 
+                    accent={act.action.includes('created') ? '#48A3FF' : act.action.includes('updated') ? '#FF9F43' : '#4CAF50'}
+                  />
+                ))
+              )
+            )}
+
+            {activeActivityTab === 'Meetings' && (
+              meetings.length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.85rem', paddingTop: '3rem' }}>No meetings scheduled for today.</div>
+              ) : (
+                meetings.map(m => (
+                  <ActivityItem 
+                    key={m._id}
+                    time={new Date(m.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
+                    title={m.title} 
+                    user={m.location || 'Online'}
+                    tag="Meeting" 
+                    accent="#9C27B0"
+                  />
+                ))
+              )
+            )}
+
+            {activeActivityTab === 'Events' && (
+              events.length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.85rem', paddingTop: '3rem' }}>No events found for today.</div>
+              ) : (
+                events.map(e => (
+                  <ActivityItem 
+                    key={e._id}
+                    time={new Date(e.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
+                    title={e.title} 
+                    user="Event"
+                    tag={new Date(e.startTime).toLocaleDateString()} 
+                    accent="#E91E63"
+                  />
+                ))
+              )
             )}
           </div>
         </div>

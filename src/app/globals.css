@@ -19,6 +19,17 @@
   --radius-sm: 12px;
 }
 
+[data-theme='dark'] {
+  --background: #0F1113;
+  --foreground: #F8F9FA;
+  --surface: #1A1C1E;
+  --surface-hover: #2D3135;
+  --border: #2D3135;
+  --text-secondary: #A0AEC0;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

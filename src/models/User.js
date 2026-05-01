@@ -21,6 +21,33 @@ const UserSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters'],
     select: false,
   },
+  jobTitle: {
+    type: String,
+    default: '',
+  },
+  company: {
+    type: String,
+    default: '',
+  },
+  bio: {
+    type: String,
+    default: '',
+  },
+  profileImage: {
+    type: String,
+    default: '',
+  },
+  notifications: {
+    tasks: { type: Boolean, default: true },
+    deadlines: { type: Boolean, default: true },
+    mentions: { type: Boolean, default: true },
+    updates: { type: Boolean, default: false },
+  },
+  appearance: {
+    type: String,
+    enum: ['light', 'dark', 'system'],
+    default: 'light',
+  },
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

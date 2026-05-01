@@ -8,6 +8,11 @@ const TaskSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  category: {
+    type: String,
+    enum: ['Work', 'Personal', 'Breaks'],
+    default: 'Work',
+  },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
@@ -30,6 +35,16 @@ const TaskSchema = new mongoose.Schema({
   dueDate: {
     type: Date,
   },
+  comments: [{
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    text: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
+  attachments: [{
+    name: String,
+    url: String,
+    createdAt: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 export default mongoose.models.Task || mongoose.model('Task', TaskSchema);

@@ -23,17 +23,28 @@ export async function PUT(req, { params }) {
 
     // Verify user is admin or member of the project
     const project = await Project.findById(task.projectId);
-    const isMember = project.members.includes(user._id);
+    const isMember = project.members.some(m => m.toString() === user._id.toString());
     const isAdmin = project.admin.toString() === user._id.toString();
 
     if (!isAdmin && !isMember) {
       return NextResponse.json({ error: 'Not authorized to update this task' }, { status: 403 });
     }
 
-    // Members can only update status
-    if (isMember && !isAdmin) {
-      if (updates.title || updates.description || updates.priority || updates.assignedTo) {
-        return NextResponse.json({ error: 'Members can only update task status' }, { status: 403 });
+    // Permission Logic
+    if (!isAdmin) {
+      // If not admin, must be the assignee to update status
+      const isAssignee = task.assignedTo?.toString() === user._id.toString();
+      
+      if (!isAssignee) {
+        return NextResponse.json({ error: 'Only the assignee or project admin can update this task status' }, { status: 403 });
+      }
+
+      // If assignee but not admin, can ONLY update status
+      const forbiddenUpdates = ['title', 'description', 'priority', 'assignedTo', 'projectId', 'dueDate'];
+      const attemptedForbidden = Object.keys(updates).some(key => forbiddenUpdates.includes(key));
+      
+      if (attemptedForbidden) {
+        return NextResponse.json({ error: 'Only admins can modify task details or reassign tasks' }, { status: 403 });
       }
     }
 

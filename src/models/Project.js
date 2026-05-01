@@ -11,6 +11,13 @@ const ProjectSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  description: {
+    type: String,
+  },
+  color: {
+    type: String,
+    default: '#48A3FF',
+  },
   members: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

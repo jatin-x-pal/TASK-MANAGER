@@ -29,7 +29,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name } = await req.json();
+    const { name, description, color } = await req.json();
 
     if (!name) {
       return NextResponse.json({ error: 'Please provide a project name' }, { status: 400 });
@@ -38,6 +38,8 @@ export async function POST(req) {
     await connectDB();
     const project = await Project.create({
       name,
+      description,
+      color: color || '#48A3FF',
       admin: user._id,
       members: []
     });

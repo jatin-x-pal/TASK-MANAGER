@@ -38,17 +38,61 @@ export async function GET() {
       }
     });
 
-    // We can also calculate tasks per user if needed, but for now we aggregate the basic stats
+    // Recent Tasks for the "Today Tasks" section
+    const recentTasks = await Task.find({ 
+      projectId: { $in: projectIds },
+      status: { $in: ['To Do', 'In Progress'] }
+    })
+    .sort({ updatedAt: -1 })
+    .limit(2);
+
+    // Weekly Productivity Breakdown (Last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const completedTasks = await Task.find({
+      projectId: { $in: projectIds },
+      status: 'Done',
+      updatedAt: { $gte: sevenDaysAgo }
+    });
+
+    const categories = ['Work', 'Personal', 'Breaks'];
+    const dailyStats = [];
+    const dayLabels = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const label = d.toLocaleDateString('en-US', { weekday: 'short' });
+      dayLabels.push(label);
+
+      const dayData = { name: label };
+      categories.forEach(cat => {
+        const count = completedTasks.filter(t => {
+          const taskDate = new Date(t.updatedAt);
+          return taskDate.toDateString() === d.toDateString() && (t.category || 'Work') === cat;
+        }).length;
+        dayData[cat.toLowerCase()] = count;
+      });
+      dailyStats.push(dayData);
+    }
+
     return NextResponse.json({
       success: true,
       data: {
         totalTasks,
         statusCounts: { todo, inProgress, done },
         overdue,
-        projectsCount: projects.length
+        projectsCount: projects.length,
+        recentTasks,
+        productivity: {
+          chartData: dailyStats,
+          score: totalTasks > 0 ? Math.round((done / totalTasks) * 100) : 0
+        }
       }
     });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

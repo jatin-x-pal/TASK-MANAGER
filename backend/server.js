@@ -87,6 +87,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import timeOffRoutes from './routes/timeOffRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
@@ -94,6 +95,13 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/time-off', timeOffRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/schedules', (req, res, next) => {
+  // Direct to the schedule handler in activityRoutes
+  req.url = '/schedules';
+  activityRoutes(req, res, next);
+});
+
 
 
 

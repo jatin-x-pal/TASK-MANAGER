@@ -21,14 +21,15 @@ const ScheduleSchema = new mongoose.Schema({
   },
   endTime: {
     type: Date,
+    required: true,
   },
   location: {
     type: String,
   },
-  participants: [{
+  projectId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
+    ref: 'Project',
+  },
 }, { timestamps: true });
 
 export default mongoose.models.Schedule || mongoose.model('Schedule', ScheduleSchema);

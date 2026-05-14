@@ -1,5 +1,7 @@
 import Project from '../models/Project.js';
 import Notification from '../models/Notification.js';
+import Activity from '../models/Activity.js';
+
 
 // @desc    Get all projects for current user
 // @route   GET /api/projects
@@ -43,6 +45,14 @@ export const createProject = async (req, res) => {
       text: `New project "${name}" has been created successfully!`,
       type: 'success',
     });
+
+    // LOG ACTIVITY
+    await Activity.create({
+      userId: req.user._id,
+      action: `created a new project: "${name}"`,
+      projectId: project._id,
+    });
+
 
     res.status(201).json({
       success: true,

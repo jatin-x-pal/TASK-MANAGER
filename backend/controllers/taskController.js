@@ -1,6 +1,8 @@
 import Task from '../models/Task.js';
 import Notification from '../models/Notification.js';
 import Project from '../models/Project.js';
+import Activity from '../models/Activity.js';
+
 
 // @desc    Create new task
 // @route   POST /api/tasks
@@ -38,6 +40,14 @@ export const createTask = async (req, res) => {
       });
     }
 
+    // LOG ACTIVITY
+    await Activity.create({
+      userId: req.user._id,
+      action: `assigned a new task: "${title}"`,
+      projectId: projectId,
+    });
+
+
     res.status(201).json({
       success: true,
       data: task,
@@ -68,7 +78,15 @@ export const updateTask = async (req, res) => {
           text: `Task "${task.title}" has been completed!`,
           type: 'success',
         });
+
+        // LOG ACTIVITY
+        await Activity.create({
+          userId: req.user._id,
+          action: `completed the task: "${task.title}"`,
+          projectId: task.project,
+        });
       }
+
     }
 
     if (updates.assignedTo && updates.assignedTo !== task.assignedTo?.toString()) {

@@ -94,3 +94,78 @@ export const deleteProject = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// @desc    Get complete project board data (Project + Tasks)
+// @route   GET /api/projects/:id/board
+export const getProjectBoard = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id)
+      .populate('admin', 'name email profileImage')
+      .populate('members', 'name email profileImage');
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    // Import Task here to avoid circular dependencies if any
+    const Task = (await import('../models/Task.js')).default;
+    const tasks = await Task.find({ project: req.params.id })
+      .populate('assignedTo', 'name email profileImage')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      project,
+      tasks
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// @desc    Add member to project by email
+// @route   PUT /api/projects/:id/add-member
+export const addMember = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const User = (await import('../models/User.js')).default;
+
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    // Only admin can add members
+    if (project.admin.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ error: 'Only admins can invite members' });
+    }
+
+    const userToAdd = await User.findOne({ email });
+    if (!userToAdd) {
+      return res.status(404).json({ error: 'User with this email not found' });
+    }
+
+    // Check if already a member
+    if (project.members.includes(userToAdd._id)) {
+      return res.status(400).json({ error: 'User is already a member of this project' });
+    }
+
+    project.members.push(userToAdd._id);
+    await project.save();
+
+    // Create notification for the new member
+    await Notification.create({
+      recipient: userToAdd._id,
+      text: `You have been added to project "${project.name}" by ${req.user.name}`,
+      type: 'info',
+    });
+
+    res.status(200).json({
+      success: true,
+      data: project
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+

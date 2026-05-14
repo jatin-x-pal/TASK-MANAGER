@@ -83,9 +83,12 @@ app.get('/', (req, res) => {
 // Import and use routes
 import authRoutes from './routes/authRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/projects', projectRoutes);
+
 
 
 app.listen(PORT, () => {

@@ -85,11 +85,14 @@ import authRoutes from './routes/authRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/messages', messageRoutes);
+
 
 
 

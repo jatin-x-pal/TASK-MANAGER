@@ -1,7 +1,7 @@
 {
-  "name": "etheria-backend",
+  "name": "task-flow-backend",
   "version": "1.0.0",
-  "description": "Backend for Etheria AI",
+  "description": "Backend for Task Flow",
   "main": "server.js",
   "type": "module",
   "scripts": {

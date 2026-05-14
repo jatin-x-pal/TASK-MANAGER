@@ -164,7 +164,7 @@ function ProfileSettings({ profile, mutate, updateUser }) {
           <SettingInput label="Full Name" value={formData.name} onChange={v => setFormData({...formData, name: v})} placeholder="e.g. John Doe" />
           <SettingInput label="Email Address" value={formData.email} disabled placeholder="john@example.com" icon={<Mail size={18} />} />
           <SettingInput label="Job Title" value={formData.jobTitle} onChange={v => setFormData({...formData, jobTitle: v})} placeholder="Product Designer" />
-          <SettingInput label="Company" value={formData.company} onChange={v => setFormData({...formData, company: v})} placeholder="Etheria AI" />
+          <SettingInput label="Company" value={formData.company} onChange={v => setFormData({...formData, company: v})} placeholder="Task Flow" />
        </div>
 
        <div style={{ marginTop: '3rem', borderTop: '1px solid var(--border)', paddingTop: '2.5rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>

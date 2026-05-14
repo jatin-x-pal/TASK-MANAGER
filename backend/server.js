@@ -51,7 +51,7 @@ const initializeDatabase = async () => {
           email: testEmail,
           password: hashedPassword,
           jobTitle: 'Developer',
-          company: 'Etheria AI',
+          company: 'Task Flow',
         });
         console.log('[Seed] Test User Created: test@example.com / password123');
 
@@ -77,7 +77,7 @@ initializeDatabase();
 
 // Routes Placeholder
 app.get('/', (req, res) => {
-  res.send('Etheria AI API is running...');
+  res.send('Task Flow API is running...');
 });
 
 // Import and use routes
